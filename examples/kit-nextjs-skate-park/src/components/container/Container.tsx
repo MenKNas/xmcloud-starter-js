@@ -1,6 +1,7 @@
-import { Placeholder } from '@sitecore-content-sdk/nextjs';
+import Placeholder from 'components/content-sdk/Placeholder';
 import React, { JSX } from 'react';
 import { ComponentProps } from 'lib/component-props';
+import { getCleanComponentMap, type CleanComponentMap } from 'src/lib/component-map-utils';
 
 interface ContainerProps extends ComponentProps {
   params: ComponentProps['params'] & {
@@ -9,7 +10,12 @@ interface ContainerProps extends ComponentProps {
   };
 }
 
-const Container = ({ params, rendering }: ContainerProps): JSX.Element => {
+const Container = ({
+  params,
+  rendering,
+  page,
+  componentMap,
+}: ContainerProps & { componentMap: CleanComponentMap }): JSX.Element => {
   const {
     styles,
     RenderingIdentifier: id,
@@ -35,21 +41,22 @@ const Container = ({ params, rendering }: ContainerProps): JSX.Element => {
     <div className={`component container-default ${styles}`} id={id}>
       <div className="component-content" style={backgroundStyle}>
         <div className="row">
-          <Placeholder name={phKey} rendering={rendering} />
+          <Placeholder name={phKey} rendering={rendering} page={page} componentMap={componentMap} />
         </div>
       </div>
     </div>
   );
 };
 
-export const Default = (props: ContainerProps): JSX.Element => {
-  const styles = props.params?.styles?.split(' ');
+export const Default = ({ params, rendering, page }: ContainerProps): JSX.Element => {
+  const styles = params?.styles?.split(' ');
+  const componentMap = getCleanComponentMap();
 
   return styles?.includes('container') ? (
     <div className="container-wrapper">
-      <Container {...props} />
+      <Container params={params} rendering={rendering} page={page} componentMap={componentMap} />
     </div>
   ) : (
-    <Container {...props} />
+    <Container params={params} rendering={rendering} page={page} componentMap={componentMap} />
   );
 };

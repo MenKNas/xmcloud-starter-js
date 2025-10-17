@@ -1,6 +1,8 @@
 import React, { JSX } from 'react';
-import { ComponentRendering, Placeholder } from '@sitecore-content-sdk/nextjs';
+import { ComponentRendering } from '@sitecore-content-sdk/nextjs';
+import Placeholder from 'components/content-sdk/Placeholder';
 import { ComponentProps } from 'lib/component-props';
+import { getCleanComponentMap } from 'src/lib/component-map-utils';
 
 /**
  * The number of rows that can be inserted into the row splitter component.
@@ -21,9 +23,10 @@ interface RowSplitterProps extends ComponentProps {
   params: ComponentProps['params'] & RowStyles;
 }
 
-export const Default = ({ params, rendering }: RowSplitterProps): JSX.Element => {
+export const Default = ({ params, rendering, page }: RowSplitterProps): JSX.Element => {
   const enabledPlaceholders = params.EnabledPlaceholders?.split(',') ?? [];
   const id = params.RenderingIdentifier;
+  const componentMap = getCleanComponentMap();
 
   return (
     <div className={`component row-splitter ${params.styles}`} id={id}>
@@ -36,7 +39,12 @@ export const Default = ({ params, rendering }: RowSplitterProps): JSX.Element =>
           <div key={index} className={`container-fluid ${rowStyles}`.trimEnd()}>
             <div>
               <div className="row">
-                <Placeholder name={placeholderKey} rendering={rendering} />
+                <Placeholder
+                  name={placeholderKey}
+                  rendering={rendering}
+                  page={page}
+                  componentMap={componentMap}
+                />
               </div>
             </div>
           </div>
